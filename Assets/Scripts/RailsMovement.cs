@@ -28,6 +28,8 @@ public class RailsMovement : MonoBehaviour
     private float bodyPitchAngle = 0f;
     public float pitchSpeed = 12f;
 
+    public Weapon primary;
+    public Weapon secondary;
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +42,7 @@ public class RailsMovement : MonoBehaviour
     {
         CaptureInputs();
         // SetBodyAngle();
+        TriggerWeapons();
     }
 
     void FixedUpdate() {
@@ -69,6 +72,16 @@ public class RailsMovement : MonoBehaviour
 
         fireInput = Input.GetButtonDown("Fire");
         secondaryInput = Input.GetButtonDown("Secondary");
+    }
+
+    private void TriggerWeapons() {
+        if (fireInput) {
+            primary.Fire();
+        }
+
+        if (secondaryInput) {
+            secondary.Fire();
+        }
     }
 
     private void SetBodyAngle() {
