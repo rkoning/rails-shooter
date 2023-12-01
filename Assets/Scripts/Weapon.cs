@@ -12,6 +12,9 @@ public class Weapon : MonoBehaviour
     public FireMode initialFireMode;
 
     public List<WeaponEffect> effects;
+    public Vector3 focusPoint;
+    public LayerMask focusMask;
+    public float focusDistance = 200f;
 
     private void Start() {
         cooldown = fireRate / 1f;
@@ -33,11 +36,24 @@ public class Weapon : MonoBehaviour
         }
     }
 
+    private void Update() {
+        SetFocusPoint();
+    }
+
     public void DealDamage(Health health) {
         DealDamage(health, 1f);
     }
 
     public void DealDamage(Health health, float increment) {
         health.TakeDamage(damage * increment);
+    }
+
+    private void SetFocusPoint() {
+        Ray ray = new Ray(transform.position, transform.forward);
+        if (Physics.Raycast(ray, out var hit, focusDistance, focusMask)) {
+            focusPoint = hit.point;
+        } else {
+            focusPoint = ray.GetPoint(focusDistance);
+        }
     }
 }

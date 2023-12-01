@@ -21,7 +21,8 @@ public class BeamEffect : WeaponEffect
         beam.enabled = true;
         do {
             Vector3 end;
-            Ray ray = new Ray(transform.position, transform.forward);
+            Vector3 focusDirection = (weapon.focusPoint - transform.position).normalized;
+            Ray ray = new Ray(transform.position, focusDirection);
             if (Physics.Raycast(ray, out var hit, range, mask)) {
                 if (hit.collider.TryGetComponent<Health>(out var health)) {
                     weapon.DealDamage(health, 1f / duration * Time.deltaTime);

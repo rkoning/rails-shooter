@@ -19,15 +19,10 @@ public class RailsMovement : MonoBehaviour
 
     public float Speed = 5f;
 
-    public float maxRollDegrees = 30f;
-    public float maxPitchDegrees = 30f;
+    public Vector3 bodyTurnOffsetTarget;
 
     public Transform body;
-    private float bodyRollAngle = 0f;
-    public float rollSpeed = 12f;
-    private float bodyPitchAngle = 0f;
-    public float pitchSpeed = 12f;
-
+    public float turnSpeed = 12f;
     public Weapon primary;
     public Weapon secondary;
 
@@ -41,7 +36,7 @@ public class RailsMovement : MonoBehaviour
     void Update()
     {
         CaptureInputs();
-        // SetBodyAngle();
+        SetBodyAngle();
         TriggerWeapons();
     }
 
@@ -88,26 +83,25 @@ public class RailsMovement : MonoBehaviour
         if (!body)
             return;
 
-        bodyRollAngle = NextBodyAngle(horizontalInput, bodyRollAngle, Time.deltaTime * rollSpeed, maxRollDegrees);
-        bodyPitchAngle = NextBodyAngle(verticalInput, bodyPitchAngle, Time.deltaTime * pitchSpeed, maxPitchDegrees);
+        Vector3 targetPoint = transform.position 
+            + transform.rotation 
+            * new Vector3(
+                horizontalInput * bodyTurnOffsetTarget.x, 
+                verticalInput * bodyTurnOffsetTarget.y, 
+                bodyTurnOffsetTarget.z
+            );
 
-        body.rotation = Quaternion.Euler(bodyPitchAngle, 0, bodyRollAngle);
+        var forward = targetPoint - transform.position;
+        var rot = Quaternion.LookRotation(forward);
+        body.rotation = Quaternion.Lerp(body.rotation, rot, turnSpeed * Time.deltaTime);
     }
-
-    private float NextBodyAngle(float inputValue, float angle, float speed, float max) {
-        if (Mathf.Abs(inputValue) > 0.1f) {
-            angle -= inputValue * speed;
-        } else {
-            angle = ReduceToZero(angle, speed);
-        }
-        return Mathf.Clamp(angle, -max, max);
-    } 
 
     private float ReduceToZero(float value, float delta) {
         if (value > 0) {
             return Mathf.Clamp(value - delta, 0, value);
-        } else {
+        } else if (value < 0) {
             return Mathf.Clamp(value + delta, -value, 0);
         }
+        return 0;
     }
 }
