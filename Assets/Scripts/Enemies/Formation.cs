@@ -18,21 +18,25 @@ public class Formation : MonoBehaviour
             members.Add(child);
             relativeStartingPositions.Add(child.localPosition);
         }
+
+        if (motions == null || motions.Count == 0) {
+            motions = new(GetComponents<MotionFunction>());
+        }
     }
 
     private void Update() {
+        if (members == null)
+            return;
         for (int i = 0; i < members.Count; i++) {
+
             var localPosition = relativeStartingPositions[i] + transform.position;
             foreach (var mf in motions) {
                 localPosition += mf.GetPositionAtTime(Time.fixedTime, i);
             }
+            if (members[i] == null)
+                continue;
+                
             members[i].position = localPosition;
         }
-    }
-
-    public Vector3 GetPositionAtTime(float time, int offset)
-    {
-        float value = 2 * time;
-        return 10f * new Vector3(Mathf.Sin(value), 0f, 0f);
     }
 }

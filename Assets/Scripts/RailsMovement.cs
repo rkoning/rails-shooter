@@ -26,6 +26,7 @@ public class RailsMovement : MonoBehaviour
     public Vector3 bodyTurnOffsetTarget;
 
     public Transform ship;
+    private Rigidbody shipRB;
     public Transform body;
     public float turnSpeed = 12f;
     public Weapon primary;
@@ -45,9 +46,13 @@ public class RailsMovement : MonoBehaviour
     private float lastFuelExpenditure = float.MinValue;
     public float CurrentFuel { get; private set; }
 
+    public static Transform Player;
+
     // Start is called before the first frame update
     void Start()
     {
+        Player = ship;
+        shipRB = ship.GetComponent<Rigidbody>();
         CurrentFuel = FuelCap;
         if (CurrentRail == null) {
             Debug.LogWarning($"No Rail assigned to: {name}");
@@ -106,7 +111,7 @@ public class RailsMovement : MonoBehaviour
         Vector3 pos = ship.position;
         pos.x = Mathf.Clamp(pos.x, transform.position.x + minX, transform.position.x + maxX);
         pos.y = Mathf.Clamp(pos.y, transform.position.y + minY, transform.position.y + maxY);
-        ship.position = pos;
+        shipRB.MovePosition(pos);
     }
 
     private void CaptureInputs() {
