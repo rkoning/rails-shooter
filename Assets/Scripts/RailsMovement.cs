@@ -46,12 +46,30 @@ public class RailsMovement : MonoBehaviour
     private float lastFuelExpenditure = float.MinValue;
     public float CurrentFuel { get; private set; }
 
-    public static Transform Player;
+    public static RailsMovement Player;
+
+    public void KillShip() {
+        ship.gameObject.SetActive(false);
+    }
+
+    public void SpawnShip() {
+        ship.gameObject.SetActive(true);
+        ship.transform.localPosition = Vector3.zero;
+    }
+
+    public void SpawnShipAfter(float seconds) {
+        StartCoroutine(WaitThenSpawnShip(seconds));
+    }   
+
+    private IEnumerator WaitThenSpawnShip(float seconds) {
+        yield return new WaitForSeconds(seconds);
+        SpawnShip();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        Player = ship;
+        Player = this;
         shipRB = ship.GetComponent<Rigidbody>();
         CurrentFuel = FuelCap;
         if (CurrentRail == null) {
