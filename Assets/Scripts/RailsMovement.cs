@@ -16,6 +16,10 @@ public class RailsMovement : MonoBehaviour
     private bool brakeInput;
     private bool fireInput;
     private bool secondaryInput;
+    private bool dodgeInput;
+    public float DodgeRange;
+    public float DodgeCooldown;
+    private float lastDodge;
 
     public float Speed = 5f;
 
@@ -88,8 +92,14 @@ public class RailsMovement : MonoBehaviour
 
 
     private void MoveShip() {
-        Vector3 delta = transform.rotation * new Vector3(horizontalInput, verticalInput, 0f) * Speed * Time.fixedDeltaTime;
-        ship.position += delta;
+        Vector3 direction = new Vector3(horizontalInput, verticalInput, 0f).normalized;
+        if (dodgeInput && Time.fixedTime > lastDodge + DodgeCooldown) {
+            lastDodge = Time.fixedTime;
+            ship.position += transform.rotation * direction * DodgeRange;
+        } else {
+            Vector3 delta = transform.rotation * direction * Speed * Time.fixedDeltaTime;
+            ship.position += delta;
+        }
     }
 
     private void ClampBodyPosition() {
@@ -105,6 +115,7 @@ public class RailsMovement : MonoBehaviour
 
         boostInput = Input.GetButton("Boost");
         brakeInput = Input.GetButton("Brake");
+        dodgeInput = Input.GetButton("Dodge");
 
         fireInput = Input.GetButtonDown("Fire");
         secondaryInput = Input.GetButtonDown("Secondary");

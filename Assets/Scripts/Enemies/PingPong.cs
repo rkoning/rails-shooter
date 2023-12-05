@@ -16,23 +16,23 @@ public enum PingPongOscillationFunction {
 
 public class PingPong : MotionFunction
 {
-    public float frequency = 2f;
-    public float range = 10f;
-    public float offsetScaling = .5f;
-    public PingPongOscillationFunction function = PingPongOscillationFunction.Sin;
-    public PingPongAxis axis = PingPongAxis.X;
+    public float Frequency = 2f;
+    public float Range = 10f;
+    public float OffsetScaling = .5f;
+    public PingPongOscillationFunction Function = PingPongOscillationFunction.Sin;
+    public PingPongAxis Axis = PingPongAxis.X;
     
     public override Vector3 GetPositionAtTime(float time, int offset)
     {
-        Func<float, float> oscillationFunc = GetOscillationFunction(function);
+        Func<float, float> oscillationFunc = GetOscillationFunction(Function);
 
-        float value = frequency * time + offset * offsetScaling * Mathf.PI;
-        return axis switch
+        float value = Frequency * time + offset * OffsetScaling * Mathf.PI;
+        return Axis switch
         {
-            PingPongAxis.X => range * new Vector3(oscillationFunc(value), 0f, 0f),
-            PingPongAxis.Y => range * new Vector3(0f, oscillationFunc(value), 0f),
-            PingPongAxis.Z => range * new Vector3(0f, 0f, oscillationFunc(value)),
-            _ => range * new Vector3(oscillationFunc(value), 0f, 0f),
+            PingPongAxis.X => Range * new Vector3(oscillationFunc(value), 0f, 0f),
+            PingPongAxis.Y => Range * new Vector3(0f, oscillationFunc(value), 0f),
+            PingPongAxis.Z => Range * new Vector3(0f, 0f, oscillationFunc(value)),
+            _ => Range * new Vector3(oscillationFunc(value), 0f, 0f),
         };
     }
 

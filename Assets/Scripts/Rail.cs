@@ -5,7 +5,7 @@ using UnityEngine;
 public class Rail : MonoBehaviour
 {
 
-    private List<Transform> points;
+    public List<Transform> points;
 
     private int railIndex = 0;
     public bool Loop = true;
