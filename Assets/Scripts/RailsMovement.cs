@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.Assertions.Comparers;
 
 public class RailsMovement : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class RailsMovement : MonoBehaviour
     public float Speed = 5f;
 
     public Vector3 bodyTurnOffsetTarget;
+    public float boostTurnScaling;
 
     public Transform ship;
     private Rigidbody shipRB;
@@ -38,6 +40,7 @@ public class RailsMovement : MonoBehaviour
     public float RailSpeed = 5f;
     public float BoostSpeed = 10f;
     public float BrakeSpeed = 2f;
+    private bool isBoosting = false;
 
     public float FuelCap = 100f;
     public float FuelDrainPerSecond = 25f;
@@ -46,8 +49,15 @@ public class RailsMovement : MonoBehaviour
     private float lastFuelExpenditure = float.MinValue;
     public float CurrentFuel { get; private set; }
 
+    public bool RadiusMode = false;
+    private float currentRadius = 15f;
+    public float MinRadius = 10f;
+    public float MaxRadius = 20f;
+
     public static RailsMovement Player;
 
+    public ParticleSystem BoostParticles;
+    
     public void KillShip() {
         ship.gameObject.SetActive(false);
     }
@@ -59,7 +69,7 @@ public class RailsMovement : MonoBehaviour
 
     public void SpawnShipAfter(float seconds) {
         StartCoroutine(WaitThenSpawnShip(seconds));
-    }   
+    }
 
     private IEnumerator WaitThenSpawnShip(float seconds) {
         yield return new WaitForSeconds(seconds);
@@ -81,23 +91,39 @@ public class RailsMovement : MonoBehaviour
     void Update()
     {
         CaptureInputs();
-        SetBodyAngle();
+        if (!RadiusMode)
+            SetBodyAngle();
         TriggerWeapons();
     }
 
     void FixedUpdate() {
         RailMove();
-        MoveShip();
-        ClampBodyPosition();
+        if (RadiusMode) {
+            MoveShipOnRadius();
+        } else {
+            MoveShip();
+            ClampBodyPosition();
+        }
     }
 
     private void RailMove() {
         float dt = Time.fixedDeltaTime;
         float speed = RailSpeed;
-        if (boostInput && CurrentFuel > 0) {
+        isBoosting = boostInput && CurrentFuel > 0;
+        
+        if (isBoosting) {
+            if (!BoostParticles.isPlaying)
+                BoostParticles.Play();
+        } else {
+            if (BoostParticles.isPlaying)
+                BoostParticles.Stop();
+        }
+
+        if (isBoosting) {
             speed = BoostSpeed;
             CurrentFuel -= FuelDrainPerSecond * dt;
             lastFuelExpenditure = Time.fixedTime;
+            isBoosting = true;
         }
         else if (brakeInput && CurrentFuel > 0) {
             speed = BrakeSpeed;
@@ -113,23 +139,50 @@ public class RailsMovement : MonoBehaviour
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(direction, Vector3.up), RailTurnSpeed * Time.fixedDeltaTime);
     }
 
+    private void MoveShipOnRadius() {
+        // Vector3 direction = new Vector3(horizontalInput, verticalInput, 0f).normalized;
+        Vector3 center = transform.position;
+
+        Vector3 diff = ship.localPosition;
+        currentRadius = diff.magnitude;
+
+        float currentAngleRadians = Mathf.Atan2(diff.y, diff.x);
+
+        float dRadians = currentAngleRadians - horizontalInput * Time.deltaTime * Speed * Mathf.PI / 180;
+
+        currentRadius += verticalInput * Time.deltaTime * Speed;
+        currentRadius = Mathf.Clamp(currentRadius, MinRadius, MaxRadius);
+        Vector3 localPosition = currentRadius * new Vector3(Mathf.Cos(dRadians), Mathf.Sin(dRadians), 0f);
+        // if (dodgeInput && Time.fixedTime > lastDodge + DodgeCooldown) {
+        //     lastDodge = Time.fixedTime;
+        //     position += transform.rotation * direction * DodgeRange;
+        // } else {
+        // Vector3 delta = transform.rotation * direction * Speed * Time.fixedDeltaTime;
+        // position += delta;
+        // }
+        localPosition = transform.rotation * localPosition;
+        ship.position = center + localPosition;
+        ship.rotation = Quaternion.LookRotation(transform.forward, localPosition - center);
+    }
 
     private void MoveShip() {
         Vector3 direction = new Vector3(horizontalInput, verticalInput, 0f).normalized;
+        Vector3 position = ship.position;
         if (dodgeInput && Time.fixedTime > lastDodge + DodgeCooldown) {
             lastDodge = Time.fixedTime;
-            ship.position += transform.rotation * direction * DodgeRange;
+            position += transform.rotation * direction * DodgeRange;
         } else {
             Vector3 delta = transform.rotation * direction * Speed * Time.fixedDeltaTime;
-            ship.position += delta;
+            position += delta;
         }
+        ship.position = position;
     }
 
     private void ClampBodyPosition() {
         Vector3 pos = ship.position;
         pos.x = Mathf.Clamp(pos.x, transform.position.x + minX, transform.position.x + maxX);
         pos.y = Mathf.Clamp(pos.y, transform.position.y + minY, transform.position.y + maxY);
-        shipRB.MovePosition(pos);
+        ship.position = pos;
     }
 
     private void CaptureInputs() {
@@ -158,13 +211,14 @@ public class RailsMovement : MonoBehaviour
         if (!body)
             return;
 
+        Vector3 offset = new Vector3(
+            horizontalInput * bodyTurnOffsetTarget.x,
+            verticalInput * bodyTurnOffsetTarget.y,
+            bodyTurnOffsetTarget.z * (isBoosting ? boostTurnScaling : 1f)
+        ); 
         Vector3 targetPoint = transform.position 
-            + transform.rotation 
-            * new Vector3(
-                horizontalInput * bodyTurnOffsetTarget.x, 
-                verticalInput * bodyTurnOffsetTarget.y, 
-                bodyTurnOffsetTarget.z
-            );
+            + transform.rotation
+            * offset;
 
         var forward = targetPoint - transform.position;
         var rot = Quaternion.LookRotation(forward);

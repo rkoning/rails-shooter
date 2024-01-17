@@ -13,6 +13,11 @@ public class PlayerHealth : Health
         isDead = false;
     }
 
+    public override void TakeDamage(float amount)
+    {
+        base.TakeDamage(amount);
+    }
+
     public override void Die() {
         PlayerLives--;
         isDead = true;

@@ -9,15 +9,13 @@ public class BeamEffect : WeaponEffect
     public float range;
     public LayerMask mask;
 
-    private float start = float.MinValue;
-
     public override void Activate()
     {
         StartCoroutine(DoBeam());
     }
 
     private IEnumerator DoBeam() {
-        start = Time.fixedTime;
+        float start = Time.fixedTime;
         beam.enabled = true;
         do {
             Vector3 end;

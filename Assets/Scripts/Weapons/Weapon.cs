@@ -12,10 +12,14 @@ public class Weapon : MonoBehaviour
     public FireMode initialFireMode;
 
     public List<WeaponEffect> effects;
+    public bool hasFocusOverride;
     public Vector3 focusPoint;
+    public Transform target;
+
+
     public LayerMask focusMask;
     public float focusDistance = 200f;
-
+    
     private void Start() {
         cooldown = fireRate / 1f;
         foreach(var fm in GetComponents<FireMode>()) {
@@ -28,6 +32,26 @@ public class Weapon : MonoBehaviour
         }
     }
 
+    public bool CanFire() {
+        float now = Time.fixedTime;
+        return now > nextFire;
+    }
+
+    public void Fire(Vector3 targetPosition) {
+        focusPoint = targetPosition;
+        hasFocusOverride = true;
+
+        Fire();
+    }
+    
+    public void Fire(Transform target) {
+        this.target = target;
+        focusPoint = target.position;
+        hasFocusOverride = true;
+
+        Fire();
+    }
+
     public void Fire() {
         float now = Time.fixedTime;
         if (now > nextFire) {
@@ -37,7 +61,8 @@ public class Weapon : MonoBehaviour
     }
 
     private void Update() {
-        SetFocusPoint();
+        if (!hasFocusOverride)
+            SetFocusPoint();
     }
 
     public void DealDamage(Health health) {
