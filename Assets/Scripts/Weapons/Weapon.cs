@@ -53,6 +53,7 @@ public class Weapon : MonoBehaviour
     }
 
     public void Fire() {
+        Debug.Log("Fire");
         float now = Time.fixedTime;
         if (now > nextFire) {
             nextFire = now + cooldown;

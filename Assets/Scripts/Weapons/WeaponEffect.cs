@@ -9,5 +9,6 @@ public abstract class WeaponEffect : MonoBehaviour
     public virtual void Initialize(Weapon weapon) {
         this.weapon = weapon;
     }
+    
     public abstract void Activate();
 }

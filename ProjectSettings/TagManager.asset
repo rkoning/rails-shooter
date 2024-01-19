@@ -13,8 +13,8 @@ TagManager:
   - UI
   - PlayerTriggers
   - Projectiles
-  - 
-  - 
+  - PlayerProjectiles
+  - Enemies
   - 
   - 
   - 
