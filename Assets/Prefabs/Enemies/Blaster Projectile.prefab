@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6479802144750068996}
   - component: {fileID: 1128113891963900789}
   - component: {fileID: 3093622724138700134}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Blaster Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -180,6 +180,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: BlasterBolt
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 21b0b7f463685434eb3d5ad00292df3f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

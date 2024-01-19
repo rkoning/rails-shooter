@@ -13,6 +13,7 @@ public class ProjectileEffect : WeaponEffect
         if (projectiles.Count <= current) {
             if (projectiles.Count < maxCacheSize) {
                 projectiles.Add(Instantiate(projectilePrefab).GetComponent<Projectile>());
+                projectiles[current].OnProjectileHitHealth += weapon.DealDamage;
             } else {
                 current = 0;
             }
