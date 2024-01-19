@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 8902968951188301334}
   - component: {fileID: 9147257409766741624}
   - component: {fileID: 3886064147125002398}
+  - component: {fileID: 2052496987585230620}
   - component: {fileID: 1476161530279921081}
-  - component: {fileID: 1348803817480097600}
   - component: {fileID: 6171638582919423010}
   m_Layer: 0
   m_Name: Weapon
@@ -30,12 +30,12 @@ Transform:
   m_GameObject: {fileID: 568431242273652486}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8806529981123514315}
   - {fileID: 7587803877267747978}
+  - {fileID: 4498146886926620319}
   m_Father: {fileID: 8440692222711178149}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &9147257409766741624
@@ -51,9 +51,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 3886064147125002398}
+  onlyAttackFromFront: 1
   leadPlayer: 1
-  leadDistance: 22
-  followPlayer: 1
+  leadDistance: 10
+  followPlayer: 0
   followSpeed: 8
 --- !u!114 &3886064147125002398
 MonoBehaviour:
@@ -69,8 +70,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fireRate: 3
   damage: 10
-  initialFireMode: {fileID: 1476161530279921081}
-  effects: []
+  initialFireMode: {fileID: 2052496987585230620}
+  effects:
+  - {fileID: 6283406177856971384}
   hasFocusOverride: 0
   focusPoint: {x: 0, y: 0, z: 0}
   target: {fileID: 0}
@@ -78,6 +80,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 9
   focusDistance: 200
+--- !u!114 &2052496987585230620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568431242273652486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 618c2d1ec5e24044c90ad52497d0a4b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  next: {fileID: 1476161530279921081}
+  weapon: {fileID: 0}
+  numberOfShots: 3
+  duration: 1
 --- !u!114 &1476161530279921081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,24 +108,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df8819f95268c074f92db245a6f690ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  next: {fileID: 1348803817480097600}
-  weapon: {fileID: 0}
-  particle: {fileID: 267401741236956905}
---- !u!114 &1348803817480097600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 568431242273652486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c047df760b468ce4b9ca169bd03e5c86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   next: {fileID: 6171638582919423010}
   weapon: {fileID: 0}
-  delay: 1
+  particle: {fileID: 267401741236956905}
 --- !u!114 &6171638582919423010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,7 +166,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 798330225562235530}
   serializedVersion: 8
-  lengthInSec: 1
+  lengthInSec: 0.25
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -238,7 +241,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.25
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -991,8 +994,8 @@ ParticleSystem:
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
-      minMaxState: 1
-      scalar: 12
+      minMaxState: 0
+      scalar: 0
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -1095,8 +1098,66 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    m_BurstCount: 0
-    m_Bursts: []
+    m_BurstCount: 1
+    m_Bursts:
+    - serializedVersion: 2
+      time: 0
+      countCurve:
+        serializedVersion: 2
+        minMaxState: 0
+        scalar: 1
+        minScalar: 30
+        maxCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        minCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+      cycleCount: 1
+      repeatInterval: 0.01
+      probability: 1
   SizeModule:
     enabled: 1
     curve:
@@ -1109,18 +1170,18 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 1
-          inSlope: -2
-          outSlope: -2
+          value: 0
+          inSlope: 0
+          outSlope: 0
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 0
-          inSlope: 0
-          outSlope: 0
+          value: 1
+          inSlope: 2
+          outSlope: 2
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
@@ -4950,7 +5011,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!1 &6607650928079179162
+--- !u!1 &5367841923046480516
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4958,23 +5019,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8806529981123514315}
-  - component: {fileID: 2269212607619145456}
-  - component: {fileID: 5092805886589536113}
+  - component: {fileID: 4498146886926620319}
+  - component: {fileID: 6283406177856971384}
   m_Layer: 0
-  m_Name: Beam
+  m_Name: Projectile Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8806529981123514315
+--- !u!4 &4498146886926620319
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6607650928079179162}
+  m_GameObject: {fileID: 5367841923046480516}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -4983,128 +5043,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8902968951188301334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!120 &2269212607619145456
-LineRenderer:
-  serializedVersion: 2
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6607650928079179162}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 0
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 829ed76dee716744992495483945c8b9, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
-  m_Parameters:
-    serializedVersion: 3
-    widthMultiplier: 1
-    widthCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    colorGradient:
-      serializedVersion: 2
-      key0: {r: 1, g: 0.29743385, b: 0, a: 1}
-      key1: {r: 1, g: 0.29803923, b: 0, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_ColorSpace: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    numCornerVertices: 0
-    numCapVertices: 0
-    alignment: 0
-    textureMode: 0
-    textureScale: {x: 1, y: 1}
-    shadowBias: 0.5
-    generateLightingData: 0
-  m_MaskInteraction: 0
-  m_UseWorldSpace: 1
-  m_Loop: 0
-  m_ApplyActiveColorSpace: 1
---- !u!114 &5092805886589536113
+--- !u!114 &6283406177856971384
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6607650928079179162}
+  m_GameObject: {fileID: 5367841923046480516}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d0fac0ea342fc4981e15941d6db4fe, type: 3}
+  m_Script: {fileID: 11500000, guid: ace89e26bad0b9f4c90a049b8a36edf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  beam: {fileID: 2269212607619145456}
-  duration: 0.5
-  range: 100
-  mask:
-    serializedVersion: 2
-    m_Bits: 8
+  projectilePrefab: {fileID: 8519977619387157139, guid: 45d277310ed537a43896cfd9a7d02341,
+    type: 3}
+  maxCacheSize: 10
 --- !u!1 &8127816064002959130
 GameObject:
   m_ObjectHideFlags: 0
@@ -5120,7 +5073,7 @@ GameObject:
   - component: {fileID: 2322953653164124987}
   - component: {fileID: 2996843910478015735}
   m_Layer: 0
-  m_Name: Test Enemy
+  m_Name: Blaster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

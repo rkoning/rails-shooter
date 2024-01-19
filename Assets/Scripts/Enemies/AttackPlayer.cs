@@ -27,8 +27,8 @@ public class AttackPlayer : MonoBehaviour
             return;
 
         bool inFront = Vector3.Dot(RailsMovement.Player.ship.forward, -GetDirectionToPlayer()) < 0;
-        Debug.DrawLine(RailsMovement.Player.ship.position, -GetDirectionToPlayer() * 100, Color.yellow);
-        Debug.DrawLine(RailsMovement.Player.ship.position, RailsMovement.Player.ship.forward * 100, inFront ? Color.cyan : Color.red);
+        // Debug.DrawLine(RailsMovement.Player.ship.position, -GetDirectionToPlayer() * 100, Color.yellow);
+        // Debug.DrawLine(RailsMovement.Player.ship.position, RailsMovement.Player.ship.forward * 100, inFront ? Color.cyan : Color.red);
 
         if (onlyAttackFromFront && Vector3.Dot(RailsMovement.Player.ship.forward, -GetDirectionToPlayer()) < 0) {
             return;
